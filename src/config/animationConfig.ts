@@ -11,6 +11,7 @@ export const animationConfig: Record<string, (() => void)[]> = {
     "/personal-portfolio": [tpHoverWebGL, textScaleHoverAnim, charAnimation],
     "/branding-studio": [textPerspectiveAnim, AwardAnimation],
     "/motion-graphic": [textPerspectiveAnim, panelPinAnimation, jumpTextAnimation],
+    "/": [jumpTextAnimation, productPinAnimation],
     "/agency-shop": [jumpTextAnimation, productPinAnimation],
     "/about-me": [charAnimation, initPrimaryMarqueeAnimation],
     "/about-us": [textPerspectiveAnim, initPrimaryMarqueeAnimation, initSecondaryMarqueeAnimation, AwardAnimation],

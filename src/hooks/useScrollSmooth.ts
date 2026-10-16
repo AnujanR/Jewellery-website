@@ -16,6 +16,10 @@ const scrollToTop = () => {
     document.body.scrollTop = 0;
 };
 
+const isTouchDevice = () =>
+    window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+    window.matchMedia("(max-width: 991px)").matches;
+
 export default function useScrollSmooth() {
     const [isScrollSmooth] = useState<boolean>(true);
     const pathname = usePathname();
@@ -26,33 +30,39 @@ export default function useScrollSmooth() {
         const smoothWrapper = document.getElementById("smooth-wrapper");
         const smoothContent = document.getElementById("smooth-content");
 
-        if (smoothWrapper && smoothContent && isScrollSmooth) {
-            gsap.config({
-                nullTargetWarn: false,
-            });
+        if (!smoothWrapper || !smoothContent || !isScrollSmooth) return;
 
-            ScrollSmoother.get()?.kill();
+        gsap.config({
+            nullTargetWarn: false,
+        });
 
-            ScrollSmoother.create({
-                wrapper: smoothWrapper,
-                content: smoothContent,
-                smooth: 2,
-                effects: true,
-                smoothTouch: 0.1,
-                normalizeScroll: false,
-                ignoreMobileResize: true,
-            });
+        ScrollSmoother.get()?.kill();
 
+        // Native scroll on phones/tablets — ScrollSmoother smoothTouch causes jitter.
+        if (isTouchDevice()) {
             scrollToTop();
-
-            ScrollTrigger.create({
-                trigger: ".shape",
-                pin: true,
-                start: "center center",
-                end: "+=300",
-                markers: false,
-            });
+            return;
         }
+
+        ScrollSmoother.create({
+            wrapper: smoothWrapper,
+            content: smoothContent,
+            smooth: 2,
+            effects: true,
+            smoothTouch: false,
+            normalizeScroll: false,
+            ignoreMobileResize: true,
+        });
+
+        scrollToTop();
+
+        ScrollTrigger.create({
+            trigger: ".shape",
+            pin: true,
+            start: "center center",
+            end: "+=300",
+            markers: false,
+        });
     }, [isScrollSmooth]);
 
     useEffect(() => {

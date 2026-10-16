@@ -1,0 +1,15 @@
+# Reference service for the VM host compose file.
+# Build & push from this repo, then add the service block below to the VM.
+
+services:
+  jewellery-website:
+    image: anujanr/jewellery-website:latest
+    platform: linux/amd64
+    container_name: jewellery-website
+    restart: always
+    ports:
+      - "127.0.0.1:3003:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
