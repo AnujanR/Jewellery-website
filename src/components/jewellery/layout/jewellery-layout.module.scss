@@ -1,0 +1,944 @@
+@use "../tokens" as *;
+
+$announce-h: 34px;
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ---------- Header ---------- */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    font-family: $sans;
+    color: $ink;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.headerScrolled {
+    transform: translateY(-$announce-h);
+    box-shadow: 0 1px 0 $line;
+}
+
+.announcement {
+    height: $announce-h;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    background: $ink;
+    color: #f3ede4;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+
+    &:hover {
+        color: #f3ede4;
+    }
+}
+
+:global(html[data-locale="si"]) .announcement,
+:global(html[data-locale="ta"]) .announcement,
+:global(html[data-locale="si"]) .navLink,
+:global(html[data-locale="ta"]) .navLink,
+:global(html[data-locale="si"]) .footerHeading,
+:global(html[data-locale="ta"]) .footerHeading {
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.headerMain {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 72px;
+    padding: 0 48px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid $line;
+
+    @media (max-width: 991px) {
+        height: 62px;
+        padding: 0 16px;
+    }
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+}
+
+.nav {
+    display: flex;
+    gap: 18px;
+
+    @media (max-width: 1199px) {
+        display: none;
+    }
+}
+
+.navLink {
+    position: relative;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $ink;
+    padding: 6px 0;
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+    }
+
+    &:hover {
+        color: $ink;
+
+        &::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    }
+}
+
+.navLinkActive::after {
+    transform: scaleX(1);
+}
+
+.menuToggle {
+    display: none !important;
+
+    @media (max-width: 1199px) {
+        display: inline-flex !important;
+        margin-left: -8px;
+    }
+}
+
+.headerLogo {
+    color: $ink;
+    line-height: 1;
+
+    &:hover {
+        color: $ink;
+    }
+
+    @media (max-width: 575px) {
+        :global(.brand-text-logo) {
+            font-size: 22px !important;
+        }
+    }
+}
+
+.headerRight {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+}
+
+.iconBtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: $ink;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+        color: $ink;
+        opacity: 0.6;
+    }
+}
+
+.hideSm {
+    @media (max-width: 575px) {
+        display: none !important;
+    }
+}
+
+.badge {
+    position: absolute;
+    top: 4px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: $gold;
+    color: #fff;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+}
+
+/* ---------- Mobile drawer ---------- */
+.drawerOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(31, 28, 25, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.drawerOverlayOpen {
+    opacity: 1;
+    visibility: visible;
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 101;
+    width: min(380px, 88vw);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 28px 32px;
+    background: #fff;
+    color: $ink;
+    font-family: $sans;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.drawerOpen {
+    transform: translateX(0);
+}
+
+.drawerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid $line;
+}
+
+.drawerLang {
+    padding: 8px 0 16px;
+}
+
+.drawerNav {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        font-family: $serif;
+        font-size: 28px;
+        line-height: 1.2;
+        color: $ink;
+        padding: 10px 0;
+        border-bottom: 1px solid $line;
+    }
+}
+
+.drawerFooter {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    a {
+        color: $ink;
+    }
+}
+
+.socials {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+
+    a {
+        display: inline-flex;
+        color: $ink;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+            color: $ink;
+            opacity: 0.6;
+        }
+    }
+}
+
+/* ---------- Bag panel ---------- */
+.bag {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 101;
+    width: min(440px, 100vw);
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    color: $ink;
+    font-family: $sans;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.bagOpen {
+    transform: translateX(0);
+    box-shadow: -12px 0 40px rgba(31, 28, 25, 0.08);
+}
+
+.bagHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid $line;
+
+    @media (max-width: 575px) {
+        padding: 16px 20px;
+    }
+}
+
+.bagTitle {
+    font-family: $serif;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1;
+    color: $ink;
+    margin: 0;
+
+    em {
+        font-style: italic;
+    }
+
+    span {
+        font-family: $sans;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        color: $muted;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+}
+
+.bagDelivery {
+    padding: 16px 28px;
+    background: $tile;
+
+    p {
+        font-size: 12px;
+        color: $ink;
+        margin: 0 0 10px;
+    }
+
+    strong {
+        font-weight: 500;
+    }
+
+    @media (max-width: 575px) {
+        padding: 14px 20px;
+    }
+}
+
+.bagProgress {
+    height: 2px;
+    background: #e2dbd1;
+
+    span {
+        display: block;
+        height: 100%;
+        background: $gold;
+        transition: width 0.4s ease;
+    }
+}
+
+.bagBody {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 28px;
+
+    @media (max-width: 575px) {
+        padding: 0 20px;
+    }
+}
+
+.bagList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bagItem {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 16px;
+    padding: 22px 0;
+    border-bottom: 1px solid $line;
+}
+
+.bagThumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    background: $tile;
+    overflow: hidden;
+
+    img {
+        object-fit: cover;
+    }
+}
+
+.bagItemInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.bagItemTop {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.bagItemTitle {
+    font-family: $serif;
+    font-size: 20px;
+    line-height: 1.15;
+    color: $ink;
+
+    &:hover {
+        color: $ink;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+}
+
+.bagItemPrice {
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.bagItemMeta {
+    font-size: 12px;
+    color: $muted;
+    margin: 6px 0 0;
+}
+
+.bagItemActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 14px;
+}
+
+.bagQty {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    border: 1px solid $line;
+
+    button {
+        width: 30px;
+        height: 100%;
+        border: 0;
+        background: none;
+        color: $ink;
+        font-size: 14px;
+
+        &:hover {
+            background: $tile;
+        }
+    }
+
+    span {
+        min-width: 26px;
+        text-align: center;
+        font-size: 13px;
+    }
+}
+
+.bagRemove {
+    border: 0;
+    background: none;
+    padding: 0;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $muted;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &:hover {
+        color: $ink;
+    }
+}
+
+.bagEmpty {
+    padding: 56px 0 40px;
+    text-align: center;
+
+    p {
+        font-size: 13px;
+        color: $muted;
+        margin: 0 auto 24px;
+        max-width: 260px;
+    }
+}
+
+.bagEmptyTitle {
+    font-family: $serif;
+    font-size: 30px !important;
+    color: $ink !important;
+    margin-bottom: 8px !important;
+    max-width: none !important;
+}
+
+.bagSuggest {
+    padding: 28px 0;
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        align-items: center;
+        gap: 14px;
+        padding: 10px 0;
+    }
+
+    li > div {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        a {
+            font-family: $serif;
+            font-size: 17px;
+            color: $ink;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        span {
+            font-size: 12px;
+            color: $muted;
+        }
+    }
+
+    li > button {
+        width: 32px;
+        height: 32px;
+        border: 1px solid $line;
+        border-radius: 50%;
+        background: #fff;
+        color: $ink;
+        font-size: 16px;
+        line-height: 1;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: $ink;
+            border-color: $ink;
+            color: #fff;
+        }
+    }
+}
+
+.bagSuggestTitle {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.bagSuggestThumb {
+    position: relative;
+    display: block;
+    width: 56px;
+    height: 56px;
+    background: $tile;
+    overflow: hidden;
+
+    img {
+        object-fit: cover;
+    }
+}
+
+.bagFoot {
+    padding: 20px 28px 24px;
+    border-top: 1px solid $line;
+    background: #fff;
+
+    @media (max-width: 575px) {
+        padding: 16px 20px 20px;
+    }
+}
+
+.bagSubtotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+
+    span:last-child {
+        font-family: $serif;
+        font-size: 22px;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+}
+
+.bagNote {
+    font-size: 12px;
+    color: $muted;
+    margin: 4px 0 16px;
+}
+
+%bagBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 50px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid $ink;
+    transition: all 0.25s ease;
+}
+
+.bagBtnDark {
+    @extend %bagBtn;
+    background: $ink;
+    color: #fff;
+
+    &:hover {
+        background: #3a342e;
+        color: #fff;
+    }
+}
+
+.bagEmpty .bagBtnDark {
+    display: inline-flex;
+    width: auto;
+    padding: 0 32px;
+}
+
+.bagBtnLight {
+    @extend %bagBtn;
+    margin-top: 10px;
+    background: #fff;
+    color: $ink;
+    text-decoration: none;
+
+    &:hover {
+        background: $tile;
+        color: $ink;
+    }
+}
+
+.bagItemActions .bagBtnLight {
+    width: auto;
+    height: 32px;
+    padding: 0 14px;
+    margin-top: 0;
+    font-size: 11px;
+}
+
+.reserveForm {
+    padding: 22px 0 28px;
+}
+
+.reserveProduct {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 22px;
+    color: $ink;
+
+    strong {
+        display: block;
+        font-family: $serif;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 1.2;
+    }
+
+    em {
+        display: block;
+        font-style: normal;
+        font-size: 12px;
+        color: $muted;
+        margin-top: 4px;
+    }
+}
+
+.reserveThumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    background: $tile;
+    overflow: hidden;
+
+    img {
+        object-fit: cover;
+    }
+}
+
+.reserveField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+
+    > span {
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: $muted;
+
+        em {
+            float: right;
+            font-style: normal;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        border: 1px solid $line;
+        background: #fff;
+        padding: 12px 14px;
+        font-size: 15px;
+        font-family: $sans;
+        color: $ink;
+        border-radius: 0;
+        outline: none;
+
+        &:focus {
+            border-color: $ink;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 88px;
+    }
+}
+
+/* ---------- Footer ---------- */
+.footer {
+    background: $tile;
+    color: $ink;
+    font-family: $sans;
+}
+
+.footerTop {
+    display: grid;
+    grid-template-columns: 1.1fr 2fr 1.1fr;
+    gap: 56px;
+    padding: 80px 48px 64px;
+
+    @media (max-width: 1199px) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 767px) {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 56px 20px 40px;
+    }
+}
+
+.footerBrand {
+    p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: $muted;
+        max-width: 320px;
+        margin: 18px 0 20px;
+    }
+}
+
+.footerLinks {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    a {
+        font-size: 13px;
+        color: $muted;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: $ink;
+        }
+    }
+
+    @media (max-width: 1199px) {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+
+    @media (max-width: 575px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.footerHeading {
+    font-family: $sans;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $ink;
+    margin-bottom: 16px;
+}
+
+.newsletter {
+    p {
+        font-size: 13px;
+        line-height: 1.6;
+        color: $muted;
+        margin-bottom: 18px;
+    }
+}
+
+.newsletterTitle {
+    font-family: $serif;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.1;
+    color: $ink;
+    margin-bottom: 10px;
+
+    em {
+        font-style: italic;
+    }
+}
+
+.newsletterForm {
+    display: flex;
+    border-bottom: 1px solid $ink;
+
+    input {
+        flex: 1;
+        min-width: 0;
+        height: 44px;
+        border: 0;
+        background: transparent;
+        font-size: 13px;
+        color: $ink;
+        padding: 0;
+        outline: none;
+
+        &::placeholder {
+            color: $muted;
+        }
+    }
+
+    button {
+        border: 0;
+        background: none;
+        color: $ink;
+        padding: 0 4px;
+    }
+}
+
+.footerBottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 22px 48px;
+    border-top: 1px solid $line;
+
+    @media (max-width: 767px) {
+        padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.payments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    span {
+        padding: 4px 10px;
+        border: 1px solid #d9d2c8;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: $ink;
+    }
+}
+
+.footerLegal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 12px;
+    color: $muted;
+
+    a {
+        color: $muted;
+
+        &:hover {
+            color: $ink;
+        }
+    }
+}

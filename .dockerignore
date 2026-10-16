@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.tmp
+.cursor*
+.DS_Store
+tsconfig.tsbuildinfo
+Dockerfile*
+docker-compose*
+.dockerignore
+eslint.config.mjs
